@@ -52,7 +52,6 @@ final class AmpHttpClient implements HttpClientInterface, LoggerAwareInterface, 
 
     public const OPTIONS_DEFAULTS = HttpClientInterface::OPTIONS_DEFAULTS + [
         'crypto_method' => \STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT,
-        'body_size_limit' => null,
     ];
 
     private array $defaultOptions = self::OPTIONS_DEFAULTS;
@@ -126,6 +125,7 @@ final class AmpHttpClient implements HttpClientInterface, LoggerAwareInterface, 
         }
 
         $request = new Request(implode('', $url), $method);
+        $request->setBodySizeLimit(0);
 
         if ($options['http_version']) {
             $request->setProtocolVersions(match ((float) $options['http_version']) {
@@ -133,10 +133,6 @@ final class AmpHttpClient implements HttpClientInterface, LoggerAwareInterface, 
                 1.1 => ['1.1', '1.0'],
                 default => ['2', '1.1', '1.0'],
             });
-        }
-
-        if ($options['body_size_limit']) {
-            $request->setBodySizeLimit($options['body_size_limit']);
         }
 
         foreach ($options['headers'] as $v) {
